@@ -1,0 +1,28 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
+
+def func(x, a, b, c):
+    return a * np.exp(b * x) + c
+
+xdata = np.array([1, 2, 3, 4, 5, 6], dtype=float)
+y = np.array([1, 1, 6, 38, 233, 2191], dtype=float)
+
+rng = np.random.default_rng()
+y_noise = 0.2 * rng.normal(size=xdata.size)
+ydata = y + y_noise
+
+plt.plot(xdata, ydata, 'b-', label='data')
+
+popt, pcov = curve_fit(func, xdata, ydata)
+plt.plot(xdata, func(xdata, *popt), 'r-',
+         label='fit: a=%5.3f, b=%5.3f, c=%5.3f' % tuple(popt))
+
+popt, pcov = curve_fit(func, xdata, ydata, bounds=(0, [3., 1., 0.5]))
+plt.plot(xdata, func(xdata, *popt), 'g--',
+         label='fit: a=%5.3f, b=%5.3f, c=%5.3f' % tuple(popt))
+
+plt.xlabel('x')
+plt.ylabel('y')
+plt.legend()
+plt.show()
